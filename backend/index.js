@@ -103,18 +103,19 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5000;
 const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
-if (!mongoUri) {
-  console.error('MongoDB connection string is missing. Set MONGODB_URI or MONGO_URI in backend/.env');
-  process.exit(1);
-}
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Backend running on port ${PORT}`);
+});
 
-mongoose
-  .connect(mongoUri)
-  .then(() => {
-    console.log('MongoDB connected');
-    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err.message);
-    process.exit(1);
-  });
+if (!mongoUri) {
+  console.error('MongoDB connection string is missing. Set MONGODB_URI in backend/.env');
+} else {
+  mongoose
+    .connect(mongoUri)
+    .then(() => {
+      console.log('MongoDB connected');
+    })
+    .catch((err) => {
+      console.error('MongoDB connection error:', err.message);
+    });
+}

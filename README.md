@@ -55,7 +55,6 @@ VITE_SOCKET_URL=http://localhost:5000
 Required Railway environment variables:
 
 ```env
-PORT=5000
 MONGODB_URI=
 JWT_SECRET=
 GEMINI_API_KEY=
@@ -63,6 +62,8 @@ CLIENT_URL=https://YOUR-VERCEL-FRONTEND-URL
 CLIENT_URLS=
 NODE_ENV=production
 ```
+
+Railway supplies the `PORT` environment variable automatically. Do not add a fixed production port.
 
 Health check:
 

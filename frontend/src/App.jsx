@@ -9,9 +9,25 @@ import CreateTicketPage from './pages/customer/CreateTicketPage';
 import CustomerTicketDetailPage from './pages/customer/CustomerTicketDetailPage';
 import AgentDashboardPage from './pages/agent/AgentDashboardPage';
 import AgentTicketDetailPage from './pages/agent/AgentTicketDetailPage';
+import { apiConfigurationError } from './services/api';
+import { socketConfigurationError } from './utils/socket';
 
 export default function App() {
   const { user } = useAuth();
+  const configurationError = apiConfigurationError || socketConfigurationError;
+
+  if (configurationError) {
+    return (
+      <main className="configuration-error" role="alert">
+        <div className="configuration-error__panel">
+          <p className="eyebrow">AI Support Desk</p>
+          <h1>Frontend configuration required</h1>
+          <p>{configurationError}</p>
+          <p>After adding the variables, create a new Vercel deployment.</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <Routes>

@@ -13,6 +13,7 @@ import dashboardRoutes from './routes/dashboardRoutes';
 
 const app = express();
 const defaultAllowedOrigins = [
+  'https://vercel.app',
   'http://localhost:5173',
 ];
 const mongoUri = process.env.MONGODB_URI;
@@ -22,7 +23,7 @@ let io = {
 };
 
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'https://vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -40,11 +41,7 @@ const corsOptions = {
 };
 
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-}));
+app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 // Expose io on req so route handlers can emit socket events.
@@ -121,7 +118,7 @@ if (require.main === module) {
   const server = createServer(app);
   io = new Server(server, {
     cors: {
-      origin: 'http://localhost:5173',
+      origin: 'https://vercel.app',
       methods: ['GET', 'POST', 'PATCH'],
       credentials: true,
     },

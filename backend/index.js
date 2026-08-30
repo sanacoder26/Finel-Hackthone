@@ -13,16 +13,8 @@ import dashboardRoutes from './routes/dashboardRoutes';
 
 const app = express();
 const defaultAllowedOrigins = [
-  'https://vercel.app',
   'http://localhost:5173',
-  'http://localhost:5174',
-  'http://127.0.0.1:5173',
-  'http://127.0.0.1:5174',
 ];
-const configuredOrigins = [process.env.CLIENT_URL, process.env.CLIENT_URLS]
-  .filter(Boolean)
-  .flatMap((value) => String(value).split(',').map((entry) => entry.trim()).filter(Boolean));
-const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...configuredOrigins])];
 const mongoUri = process.env.MONGODB_URI;
 let mongoConnectionPromise;
 let io = {
@@ -30,7 +22,7 @@ let io = {
 };
 
 const corsOptions = {
-  origin: 'https://vercel.app',
+  origin: 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -48,7 +40,11 @@ const corsOptions = {
 };
 
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+}));
 app.options('*', cors(corsOptions));
 
 // Expose io on req so route handlers can emit socket events.
@@ -125,12 +121,7 @@ if (require.main === module) {
   const server = createServer(app);
   io = new Server(server, {
     cors: {
-      origin(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-          return callback(null, true);
-        }
-        return callback(new Error(`Socket CORS blocked for origin: ${origin}`));
-      },
+      origin: 'http://localhost:5173',
       methods: ['GET', 'POST', 'PATCH'],
       credentials: true,
     },

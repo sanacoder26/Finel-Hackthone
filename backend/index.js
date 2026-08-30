@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 import { createServer } from 'http';
-import express, { json } from 'express';
+import express from 'express';
 import cors from 'cors';
 import { connection, connect } from 'mongoose';
 import { Server } from 'socket.io';
@@ -30,12 +30,7 @@ let io = {
 };
 
 const corsOptions = {
-  origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error(`CORS blocked for origin: ${origin}`));
-  },
+  origin: 'https://vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -52,9 +47,9 @@ const corsOptions = {
   ],
 };
 
+app.use(express.json());
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-app.use(json());
 
 // Expose io on req so route handlers can emit socket events.
 app.use((req, res, next) => {

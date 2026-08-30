@@ -13,6 +13,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 const defaultAllowedOrigins = [
+  'https://sanacoder26-done.vercel.app',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
@@ -41,6 +42,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // Expose io on req so route handlers can emit socket events.

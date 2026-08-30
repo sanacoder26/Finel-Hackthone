@@ -1,19 +1,19 @@
 require('dotenv').config();
 
-const http = require('http');
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const { Server } = require('socket.io');
+import { createServer } from 'http';
+import express, { json } from 'express';
+import cors from 'cors';
+import { connection, connect } from 'mongoose';
+import { Server } from 'socket.io';
 
-const authRoutes = require('./routes/authRoutes');
-const ticketRoutes = require('./routes/ticketRoutes');
-const messageRoutes = require('./routes/messageRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
+import authRoutes from './routes/authRoutes';
+import ticketRoutes from './routes/ticketRoutes';
+import messageRoutes from './routes/messageRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
 
 const app = express();
 const defaultAllowedOrigins = [
-  'https://sanacoder26-copmleted.vercel.app',
+  'https://vercel.app',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
@@ -38,12 +38,23 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: [
+    'X-CSRF-Token',
+    'X-Requested-With',
+    'Accept',
+    'Accept-Version',
+    'Content-Length',
+    'Content-MD5',
+    'Content-Type',
+    'Date',
+    'X-Api-Version',
+    'Authorization',
+  ],
 };
 
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-app.use(express.json());
+app.use(json());
 
 // Expose io on req so route handlers can emit socket events.
 app.use((req, res, next) => {
@@ -69,9 +80,9 @@ async function connectToMongo() {
   if (!mongoUri) {
     throw new Error('MONGODB_URI is not configured');
   }
-  if (mongoose.connection.readyState === 1) return;
+  if (connection.readyState === 1) return;
   if (!mongoConnectionPromise) {
-    mongoConnectionPromise = mongoose.connect(mongoUri).catch((err) => {
+    mongoConnectionPromise = connect(mongoUri).catch((err) => {
       mongoConnectionPromise = undefined;
       throw err;
     });
@@ -116,7 +127,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {
-  const server = http.createServer(app);
+  const server = createServer(app);
   io = new Server(server, {
     cors: {
       origin(origin, callback) {
@@ -143,4 +154,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = app;
+export default app;

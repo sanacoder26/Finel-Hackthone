@@ -13,7 +13,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 const defaultAllowedOrigins = [
-  'https://sanacoder26-done.vercel.app',
+  'https://sanacoder26-copmleted.vercel.app',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
